@@ -68,8 +68,18 @@ Some examples
 </pre>
 		</td>
 	</tr>
+
+</table>
+
 	
-	
+<table width="100%">
+	<thead>
+		<tr>
+			<th></th>
+			<th width="50%">DSL</th>
+			<th width="50%">XML</th>
+		</tr>
+	</thead>
 	<tr>
 		<th valign="top" align="left">Parallel<br/>(Threads)</th>
 		<td>
@@ -115,9 +125,17 @@ Some examples
 </pre>
 		</td>
 	</tr>		
+</table>
 
-
-
+	
+<table width="100%">
+	<thead>
+		<tr>
+			<th></th>
+			<th width="50%">DSL</th>
+			<th width="50%">XML</th>
+		</tr>
+	</thead>
 	<tr>
 		<th valign="top" align="left">Variables</th>
 		<td>
@@ -155,8 +173,17 @@ Some examples
 </pre>
 		</td>
 	</tr>		
+</table>
 
-
+	
+<table width="100%">
+	<thead>
+		<tr>
+			<th></th>
+			<th width="50%">DSL</th>
+			<th width="50%">XML</th>
+		</tr>
+	</thead>
 	<tr>
 		<th valign="top" align="left">Loops</th>
 		<td>
@@ -182,8 +209,17 @@ Some examples
 </pre>
 		</td>
 	</tr>		
+</table>
 
-
+	
+<table width="100%">
+	<thead>
+		<tr>
+			<th></th>
+			<th width="50%">DSL</th>
+			<th width="50%">XML</th>
+		</tr>
+	</thead>
 	<tr>
 		<th valign="top" align="left">Loops<br/>(Threaded)</th>
 		<td>
@@ -209,9 +245,17 @@ Some examples
 </pre>
 		</td>
 	</tr>		
+</table>
 
-
-
+	
+<table width="100%">
+	<thead>
+		<tr>
+			<th></th>
+			<th width="50%">DSL</th>
+			<th width="50%">XML</th>
+		</tr>
+	</thead>
 	<tr>
 		<th valign="top" align="left">Conditionals</th>
 		<td valign="top">
@@ -248,7 +292,4 @@ Some examples
 </pre>
 		</td>
 	</tr>		
-
-
-	
 </table>
