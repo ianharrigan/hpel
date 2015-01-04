@@ -15,16 +15,15 @@ TODO:
 Some examples
 -------------------------
 
+#### Sequences
 <table width="100%">
 	<thead>
 		<tr>
-			<th></th>
 			<th width="50%">DSL</th>
 			<th width="50%">XML</th>
 		</tr>
 	</thead>
 	<tr>
-		<th valign="top" align="left">Sequences</th>
 		<td>
 <pre>
 .beginSequence()
@@ -71,17 +70,15 @@ Some examples
 
 </table>
 
-	
+#### Parallel (Threads)	
 <table width="100%">
 	<thead>
 		<tr>
-			<th></th>
 			<th width="50%">DSL</th>
 			<th width="50%">XML</th>
 		</tr>
 	</thead>
 	<tr>
-		<th valign="top" align="left">Parallel<br/>(Threads)</th>
 		<td>
 <pre>
 .beginParallel()
@@ -128,16 +125,15 @@ Some examples
 </table>
 
 	
+#### Variables	
 <table width="100%">
 	<thead>
 		<tr>
-			<th></th>
 			<th width="50%">DSL</th>
 			<th width="50%">XML</th>
 		</tr>
 	</thead>
 	<tr>
-		<th valign="top" align="left">Variables</th>
 		<td>
 <pre>
 .beginSequence()
@@ -176,16 +172,15 @@ Some examples
 </table>
 
 	
+#### Loops	
 <table width="100%">
 	<thead>
 		<tr>
-			<th></th>
 			<th width="50%">DSL</th>
 			<th width="50%">XML</th>
 		</tr>
 	</thead>
 	<tr>
-		<th valign="top" align="left">Loops</th>
 		<td>
 <pre>
 .beginSequence()
@@ -212,16 +207,15 @@ Some examples
 </table>
 
 	
+#### Loops (Threaded)
 <table width="100%">
 	<thead>
 		<tr>
-			<th></th>
 			<th width="50%">DSL</th>
 			<th width="50%">XML</th>
 		</tr>
 	</thead>
 	<tr>
-		<th valign="top" align="left">Loops<br/>(Threaded)</th>
 		<td>
 <pre>
 .beginParallel()
@@ -248,16 +242,15 @@ Some examples
 </table>
 
 	
+#### Conditionals
 <table width="100%">
 	<thead>
 		<tr>
-			<th></th>
 			<th width="50%">DSL</th>
 			<th width="50%">XML</th>
 		</tr>
 	</thead>
 	<tr>
-		<th valign="top" align="left">Conditionals</th>
 		<td valign="top">
 <pre>
 .beginSequence()
