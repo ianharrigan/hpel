@@ -26,7 +26,7 @@ Some examples
 	<tr>
 		<th valign="top" align="left">Sequences</th>
 		<td>
-<div class="highlight highlight-haxe"><pre>
+<pre style="font-size: 10px">
 .beginSequence()
 	.beginSequence()
 		.log("start sequence 1")
@@ -44,7 +44,7 @@ Some examples
 		.log("end sequence 3")
 	.endSequence()
 .endSequence()
-</pre></div>
+</pre>
 		</td>
 		<td>
 <pre>
