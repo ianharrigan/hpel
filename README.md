@@ -10,6 +10,7 @@ TODO:
 - Error handling scopes
 - Service repository (plus service adaptors, eg: SQL, Files, HTTP, FTP, etc)
 - Service invocation framework 
+- https://github.com/ianharrigan/hpel/blob/master/src/haxe/processing/hpel/Process.hx#L218
 - Much more!
 	
 Some examples
