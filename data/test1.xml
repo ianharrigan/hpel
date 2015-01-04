@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<process>
+	<!--
+	<parallel>
+		<sequence>
+			<log message="start thread 1" />
+			<delay seconds="15" />
+			<log message="end thread 1" />
+		</sequence>
+		
+		<sequence>
+			<log message="start thread 2" />
+			<delay seconds="10" />
+			<log message="end thread 2" />
+		</sequence>
+		
+		<sequence>
+			<log message="start thread 3" />
+			<delay seconds="5" />
+			<log message="end thread 3" />
+		</sequence>
+	</parallel>
+	-->
+
+	<!--
+	<loop items="[15, 10, 5]" var="delay">
+		<log message="delaying for ${delay} seconds" />
+		<delay seconds="${delay}" />
+		<log message="${delay} second delay complete" />
+	</loop>
+	-->
+	
+	<!--
+	<parallel>
+		<loop items="[15, 10, 5]" var="delay">
+			<log message="delaying for ${delay} seconds" />
+			<delay seconds="${delay}" />
+			<log message="${delay} second delay complete" />
+		</loop>
+	</parallel>
+	-->
+	
+	<sequence>
+		<set var="testVar" value="-1" />
+		<choose>
+			<when condition="${testVar >= 1}">
+				<log message="1 or greater! (value=${testVar})" />
+			</when>
+			<when condition="${testVar < 0}">
+				<log message="0 or less! (value=${testVar})" />
+			</when>
+			<otherwise>
+				<log message="Guess it must be zero! (value=${testVar})" />
+			</otherwise>
+		</choose>
+	</sequence>
+	
+	<!--
+	<sequence>
+		<set var="var_global" value="something" />
+		<sequence>
+			<set var="var1" value="bob" />
+			<log message="1" />
+			<delay seconds=".5" />
+			<log message="2 ${var1 + 'tim'}" />
+			<delay seconds=".5" />
+		</sequence>
+		
+		<sequence>
+			<log message="3" />
+			<delay seconds=".5" />
+			<log message="4" />
+			<log message="${var_global}, ${var1}" />
+			<delay seconds=".5" />
+		</sequence>
+	</sequence>
+	-->
+</process>
