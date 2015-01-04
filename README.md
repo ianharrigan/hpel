@@ -26,7 +26,7 @@ Some examples
 	<tr>
 		<th valign="top" align="left">Sequences</th>
 		<td>
-<pre style="font-size: 10px">
+<pre>
 .beginSequence()
 	.beginSequence()
 		.log("start sequence 1")
