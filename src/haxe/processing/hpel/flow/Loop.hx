@@ -16,7 +16,7 @@ class Loop extends Scope {
 			return;
 		}
 		
-		var arr:Array<Dynamic> = cast evalString(items);// new Array<Dynamic>();
+		var arr:Array<Dynamic> = cast evalString(items);
 		if (Std.is(items, Array)) {
 			arr = cast items;
 		}

@@ -17,6 +17,7 @@ class XMLBuilder extends ProcessBuilder {
 		_classNames.set("scope", haxe.processing.hpel.flow.Scope);
 		_classNames.set("sequence", haxe.processing.hpel.flow.Sequence);
 		_classNames.set("delay", haxe.processing.hpel.standard.Delay);
+		_classNames.set("invoke", haxe.processing.hpel.standard.Invoke);
 		_classNames.set("log", haxe.processing.hpel.standard.Log);
 		_classNames.set("set", haxe.processing.hpel.standard.Set);
 	}

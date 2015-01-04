@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<services>
+	<service id="company_a" type="http">
+		<param name="url" value="http://localhost:2000/companya/getProducts" />
+		<param name="type" value="json" />
+	</service>
+	<service id="company_b" type="http">
+		<param name="url" value="http://localhost:2000/companyb/getProducts" />
+		<param name="type" value="json" />
+	</service>
+	<service id="company_c" type="http">
+		<param name="url" value="http://localhost:2000/companyc/getProducts" />
+		<param name="type" value="json" />
+	</service>
+</services>

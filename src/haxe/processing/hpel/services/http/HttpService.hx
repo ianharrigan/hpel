@@ -1,0 +1,95 @@
+package haxe.processing.hpel.services.http;
+
+import haxe.format.JsonParser;
+import haxe.Http;
+import haxe.processing.hpel.util.IdUtils;
+
+#if neko
+import neko.vm.Thread;
+#elseif cpp
+import neko.vm.Thread;
+#end
+
+class HttpResponseType {
+	public static inline var RAW:String = "raw";
+	public static inline var JSON:String = "json";
+}
+
+class HttpService extends Service {
+	public var url(default, default):String;
+	public var type(default, default):String = HttpResponseType.RAW;
+	
+	public var errorMessage:String = null;
+	public var status:Int = -1;
+	
+	public function new() {
+		super();
+	}
+	
+	public override function setServiceParam(name:String, value:Dynamic):Void {
+		switch (name) {
+			case "url": 
+				url = value;
+			case "type":
+				type = value;
+		}
+	}
+	
+	public override function delegateCall(operation:String = null, params:Map<String, Dynamic> = null) {
+		errorMessage = null;
+		status = -1;
+		
+		var callThread:Thread = Thread.create(callThread);
+		callThread.sendMessage(this);
+		callThread.sendMessage(Thread.current());
+		
+		Thread.readMessage(true);
+		if (errorMessage == null) {
+			success();
+		} else {
+			error();
+		}
+	}
+	
+	private function processResponse(http:Http):Void {
+		responseVars = new Map<String, String>();
+		if (http.responseHeaders != null) {
+			for (key in http.responseHeaders.keys()) {
+				responseVars.set(key, http.responseHeaders.get(key));
+			}
+		}
+		
+		switch (type) {
+			case HttpResponseType.JSON:
+				responseData = JsonParser.parse(http.responseData);
+			default:
+				responseData = http.responseData;
+		}
+	}
+	
+	private function callThread() {
+		var p:HttpService = Thread.readMessage(true);
+		var m:Thread = Thread.readMessage(true);
+		var u:String = p.url;
+		trace("running http call");
+		var http:Http = new Http(u);
+		http.cnxTimeout = 10000;
+		//http.setParameter("test", IdUtils.guid());
+		//trace(http.url);
+		http.onData = function onData(data:String) {
+			trace(data);
+			p.processResponse(http);
+			m.sendMessage("complete");
+		}
+		http.onStatus = function onStatus(status:Int) {
+			trace("HttpService::onStatus - " + status);
+			p.status = status;
+		}
+		http.onError = function onError(msg:String) {
+			trace("HttpService::onError - " + msg);
+			p.errorMessage = msg;
+			m.sendMessage("errored");
+		}
+		http.request();
+	}
+}

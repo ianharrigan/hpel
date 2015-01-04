@@ -45,6 +45,7 @@ class Parallel extends Scope {
 		var c:Process = Thread.readMessage(true);
 		var t:Parallel = Thread.readMessage(true);
 		var m:Thread = Thread.readMessage(true);
+		trace("starting " + c.id);
 		c.execute().handle(function(r) {
 			m.sendMessage(r);
 		});

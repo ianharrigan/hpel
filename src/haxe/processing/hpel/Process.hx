@@ -2,9 +2,11 @@ package haxe.processing.hpel;
 
 import haxe.processing.hpel.flow.Scope;
 import haxe.processing.hpel.hscript.ScriptInterp;
+import haxe.processing.hpel.util.IdUtils;
 import tink.core.Future;
 
 class Process {
+	public var id(default, default):String;
 	public var parent(default, default):Process;
 
 	private var complete(default, null):Bool = false;
@@ -15,6 +17,7 @@ class Process {
 	private var _vars:Map<String, Dynamic>;
 	
 	public function new() {
+		id = IdUtils.createObjectId(this);
 		_trigger = new FutureTrigger<ProcessResult>();
 		_vars = new Map<String, Dynamic>();
 	}
@@ -147,6 +150,9 @@ class Process {
 		
 		var copy:String = s;
 		var n1:Int = copy.indexOf("${");
+		if (n1 == -1) {
+			return s;
+		}
 		while (n1 != -1) {
 			var n2:Int = copy.indexOf("}", n1);
 			
@@ -277,5 +283,9 @@ class Process {
 	
 	public function set(name:String, value:Dynamic):Process {
 		return addChild(haxe.processing.hpel.standard.Set, [name, value]);
+	}
+	
+	public function invoke(serviceId:Dynamic, operation:Dynamic = null, varName:String = null):Process {
+		return addChild(haxe.processing.hpel.standard.Invoke, [serviceId, operation, varName]);
 	}
 }

@@ -4,7 +4,7 @@
   <output>
     <movie outputType="Application" />
     <movie input="" />
-    <movie path="bin\hpel.n" />
+    <movie path="bin\index.n" />
     <movie fps="0" />
     <movie width="0" />
     <movie height="0" />
@@ -19,21 +19,21 @@
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="" />
+    <option directives="getter_support" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
-    <option mainClass="haxe.processing.hpel.Main" />
+    <option mainClass="haxe.processing.hpel.demo.Main" />
     <option enabledebug="False" />
-    <option additional="-resource data/test1.xml@test1.xml&#xA;-resource data/services.xml@services.xml" />
+    <option additional="" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
-    <library name="tink_core" />
-    <library name="hscript" />
+    <library name="ufront-mvc" />
+    <library name="erazor" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
-    <compile path="src\haxe\processing\hpel\Main.hx" />
+    <compile path="src\haxe\processing\hpel\demo\Main.hx" />
   </compileTargets>
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>

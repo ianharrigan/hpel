@@ -23,11 +23,13 @@
 	-->
 
 	<!--
-	<loop items="[15, 10, 5]" var="delay">
-		<log message="delaying for ${delay} seconds" />
-		<delay seconds="${delay}" />
-		<log message="${delay} second delay complete" />
-	</loop>
+	<sequence>
+		<loop items="[15, 10, 5]" var="delay">
+			<log message="delaying for ${delay} seconds" />
+			<delay seconds="${delay}" />
+			<log message="${delay} second delay complete" />
+		</loop>
+	</sequence>
 	-->
 	
 	<!--
@@ -47,13 +49,29 @@
 				<log message="1 or greater! (value=${testVar})" />
 			</when>
 			<when condition="${testVar < 0}">
-				<log message="0 or less! (value=${testVar})" />
+				<log message="less than 0! (value=${testVar})" />
 			</when>
 			<otherwise>
 				<log message="Guess it must be zero! (value=${testVar})" />
 			</otherwise>
 		</choose>
 	</sequence>
+	
+	<!--
+	<sequence>
+		<set var="var1" value="100" />
+		<sequence>
+			<set var="scopedVar" value="200" />
+			<set var="result" value="${var1 + scopedVar}" />
+			<log message="result = ${result}" />
+		</sequence>
+		<sequence>
+			<set var="scopedVar" value="300" />
+			<set var="result" value="${var1 + scopedVar}" />
+			<log message="result = ${result}" />
+		</sequence>
+	</sequence>
+	-->
 	
 	<!--
 	<sequence>
