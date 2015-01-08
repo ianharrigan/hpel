@@ -6,7 +6,7 @@ class When extends Process {
 	public var condition(default, default):Dynamic;
 	
 	public function new(condition:Dynamic = null) {
-		super();
+		super(["condition"]);
 		this.condition = condition;
 	}
 	

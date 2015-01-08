@@ -10,7 +10,7 @@ class Invoke extends Process {
 	public var varName:String;
 	
 	public function new(serviceId:Dynamic = null, operation:Dynamic = null, varName:String = null) {
-		super();
+		super(["service", "operation", "var"]);
 		this.serviceId = serviceId;
 		this.operation = operation;
 		this.varName = varName;
@@ -24,8 +24,20 @@ class Invoke extends Process {
 		if (varNameCopy == null) {
 			varNameCopy = "invokeResult";
 		}
-		
+	
 		var service:Service = ServiceRepository.instance.createServiceInstance(serviceIdCopy);
+		
+		var params:Process = findChild(Params);
+		if (params != null) {
+			var paramArray:Array<Process> = params.findChildren(Param);
+			for (p in paramArray) {
+				var param:Param = cast p;
+				var name = evalString(param.name);
+				var value = evalString(param.value);
+				service.setServiceParam(name, value);
+			}
+		}
+		
 		service.call(operationCopy).handle(function(result) {
 			setVar(varNameCopy, result.responseData);
 			success();

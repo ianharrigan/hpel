@@ -19,6 +19,8 @@ class XMLBuilder extends ProcessBuilder {
 		_classNames.set("delay", haxe.processing.hpel.standard.Delay);
 		_classNames.set("invoke", haxe.processing.hpel.standard.Invoke);
 		_classNames.set("log", haxe.processing.hpel.standard.Log);
+		_classNames.set("param", haxe.processing.hpel.standard.Param);
+		_classNames.set("params", haxe.processing.hpel.standard.Params);
 		_classNames.set("set", haxe.processing.hpel.standard.Set);
 	}
 	
@@ -56,8 +58,11 @@ class XMLBuilder extends ProcessBuilder {
 		}
 		
 		var params:Array<Dynamic> = [];
-		for (attr in node.attributes()) {
-			params.push(node.get(attr));
+		var paramNames:Array<String> = getOrderedParamList(cls);
+		if (paramNames != null) {
+			for (paramName in paramNames) {
+				params.push(node.get(paramName));
+			}
 		}
 		
 		p = p.addChild(cls, params);
@@ -69,5 +74,12 @@ class XMLBuilder extends ProcessBuilder {
 	
 	private function getClassFromAlias(alias:String):Class<Process> { // TEMP
 		return _classNames.get(alias);
+	}
+	
+	private function getOrderedParamList(cls:Class<Process>):Array<String> { // TEMP?
+		var arr:Array<String> = new Array<String>();
+		var inst:Process = Type.createInstance(cls, []);
+		arr = inst.paramNames;
+		return arr;
 	}
 }

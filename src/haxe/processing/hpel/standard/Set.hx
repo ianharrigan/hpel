@@ -7,7 +7,7 @@ class Set extends Process {
 	public var value(default, default):Dynamic;
 	
 	public function new(name:String, value:Dynamic) {
-		super();
+		super(["name", "value"]);
 		this.name = name;
 		this.value = value;
 	}

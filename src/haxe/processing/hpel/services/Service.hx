@@ -8,6 +8,8 @@ class Service {
 	public var responseData(default, default):Dynamic;
 	public var responseVars(default, default):Map<String, String>;
 	
+	private var _serviceParams:Map<String, Dynamic>;
+	
 	public function new() {
 		_trigger = new FutureTrigger<Service>();
 	}
@@ -30,5 +32,9 @@ class Service {
 	}
 	
 	public function setServiceParam(name:String, value:Dynamic):Void {
+		if (_serviceParams == null) {
+			_serviceParams = new Map<String, Dynamic>();
+		}
+		_serviceParams.set(name, value);
 	}
 }

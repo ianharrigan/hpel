@@ -6,13 +6,19 @@ class Delay extends Process {
 	public var seconds(default, default):Dynamic = 0;
 	
 	public function new(seconds:Dynamic = 0) {
-		super();
+		super(["seconds"]);
 		this.seconds = seconds;
 	}
 	
 	// Overridables
 	private override function delegateExecute() {
-		var s:Float = cast evalString(seconds);
+		var r = evalString(seconds);
+		var s:Float;
+		if (Std.is(r, Float) == false) {
+			s = Std.parseFloat(r);
+		} else {
+			s = cast r;
+		}
 		Sys.sleep(s);
 		success();
 	}

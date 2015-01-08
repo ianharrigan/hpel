@@ -42,6 +42,7 @@
 	</parallel>
 	-->
 	
+	<!--
 	<sequence>
 		<set var="testVar" value="-1" />
 		<choose>
@@ -55,6 +56,28 @@
 				<log message="Guess it must be zero! (value=${testVar})" />
 			</otherwise>
 		</choose>
+	</sequence>
+	-->
+	
+	<sequence>
+		<log message="" />
+		<log message="" />
+		<invoke service="company_b" operation="getQuote" var="result">
+			<params>
+				<param name="param1" value="value1" />
+				<param name="param2" value="value2" />
+				<param name="param3" value="value3" />
+			</params>
+		</invoke>
+		<log message="results found = ${result.found}" />
+		<invoke service="company_c" operation="getQuote" var="result">
+			<params>
+				<param name="param1" value="value1" />
+				<param name="param2" value="value2" />
+				<param name="param3" value="value3" />
+			</params>
+		</invoke>
+		<log message="results found = ${result.found}" />
 	</sequence>
 	
 	<!--

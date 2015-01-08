@@ -3,6 +3,7 @@ package haxe.processing.hpel;
 import haxe.processing.hpel.flow.Scope;
 import haxe.processing.hpel.hscript.ScriptInterp;
 import haxe.processing.hpel.util.IdUtils;
+import haxe.processing.hpel.util.Logger;
 import tink.core.Future;
 
 class Process {
@@ -16,7 +17,10 @@ class Process {
 
 	private var _vars:Map<String, Dynamic>;
 	
-	public function new() {
+	public var paramNames(default, null):Array<String>; // used in xml to get correct order of constructor params
+	
+	public function new(paramNames:Array<String> = null) {
+		this.paramNames = paramNames;
 		id = IdUtils.createObjectId(this);
 		_trigger = new FutureTrigger<ProcessResult>();
 		_vars = new Map<String, Dynamic>();
@@ -135,7 +139,7 @@ class Process {
 		if (indent == null) {
 			indent = "";
 		}
-		trace(indent + cls);
+		Logger.debug(indent + cls);
 		if (_children != null) {
 			for (c in _children) {
 				c.dump(indent + "  ");
@@ -187,7 +191,7 @@ class Process {
 		try {
 			result = interp.expr(program);
 		} catch (e:Dynamic) {
-			trace("WARNING: " + e);
+			Logger.warn("WARNING: " + e);
 		}
 		return result;
 	}
@@ -212,6 +216,7 @@ class Process {
 		var p = this;
 		var r = null;
 		while (p != null) {
+			var className:String = Type.getClassName(Type.getClass(p));
 			if (Std.is(p, type)) {
 				r = p;
 				break;
@@ -219,6 +224,34 @@ class Process {
 			p = p.parent;
 		}
 		return r;
+	}
+	
+	public function findChild(type:Class<Process>, from:Int = 0) {
+		var p = null;
+		var r = null;
+		if (_children != null) {
+			var index:Int = 0;
+			for (c in _children) {
+				if (Std.is(c, type) && index >= from) {
+					r = c;
+					break;
+				}
+				index++;
+			}
+		}
+		return r;
+	}
+	
+	public function findChildren(type:Class<Process>):Array<Process> {
+		var arr:Array<Process> = new Array<Process>();
+		if (_children != null) {
+			for (c in _children) {
+				if (Std.is(c, type)) {
+					arr.push(c);
+				}
+			}
+		}
+		return arr;
 	}
 	
 	// Util methods, should be built by macros eventually, broke my brain trying to figure it out
@@ -288,4 +321,37 @@ class Process {
 	public function invoke(serviceId:Dynamic, operation:Dynamic = null, varName:String = null):Process {
 		return addChild(haxe.processing.hpel.standard.Invoke, [serviceId, operation, varName]);
 	}
+	
+	public function beginParams():Process {
+		var p = findChild(haxe.processing.hpel.standard.Invoke,  _children.length - 1);
+		if (p == null) {
+			throw "No matching invoke";
+		}
+		return p.addChild(haxe.processing.hpel.standard.Params);
+	}
+	
+	public function endParams():Process {
+		return parent.parent;
+	}
+	
+	public function param(name:Dynamic, value:Dynamic):Process {
+		return addChild(haxe.processing.hpel.standard.Param, [name, value]);
+		var p = findParent(haxe.processing.hpel.standard.Params);
+		if (p == null) {
+			throw "No parent params";
+		}
+		return p.addChild(haxe.processing.hpel.standard.Param, [name, value]);
+	}
+	
+	public function call(fn:Void->Void):Process {
+		return addChild(haxe.processing.hpel.standard.Call, [fn]);
+	}
+	
+	// temp helpers
+	/*
+	public var className(get, null):String;
+	private function get_className():String {
+		return Type.getClassName(Type.getClass(this));
+	}
+	*/
 }

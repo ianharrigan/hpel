@@ -5,7 +5,7 @@ class Loop extends Scope {
 	public var varName:String;
 	
 	public function new(items:Dynamic = null, varName:String = null) {
-		super();
+		super(["items", "var"]);
 		this.items = items;
 		this.varName = varName;
 	}

@@ -4,6 +4,7 @@ import haxe.processing.hpel.flow.Sequence;
 import haxe.processing.hpel.services.ServiceDescriptor;
 import haxe.processing.hpel.services.ServiceRepository;
 import haxe.processing.hpel.standard.Log;
+import haxe.processing.hpel.util.Logger;
 import haxe.Resource;
 import neko.Lib;
 
@@ -21,13 +22,13 @@ class Main  {
 		
 		/*
 		var s = ServiceRepository.instance.createServiceInstance("company_a");
-		trace(Type.getClassName(Type.getClass(s)));
+		Logger.debug(Type.getClassName(Type.getClass(s)));
 		
 		ServiceRepository
 			.instance
 				.createServiceInstance("company_a")
 					.call("getQuote").handle(function(r) {
-						trace("items found = " + r.responseData.found);
+						Logger.info("items found = " + r.responseData.found);
 					});
 		*/
 		
@@ -36,14 +37,14 @@ class Main  {
 		p = ProcessBuilder.create(ProcessBuilder.XML, xmlString);
 		p.dump();
 		p.execute().handle(function(r) {
-			trace("Process result: " + r);
+			Logger.info("Process result: " + r);
 		});
 		return;
 		*/
 		
 		p = ProcessBuilder.create()
 		
-					/*
+				.beginSequence()
 					.set("testVar", 0)
 					.beginChoose()
 						.when("${testVar >= 1}")
@@ -53,9 +54,9 @@ class Main  {
 						.otherwise()
 							.log("Guess it must be zero! (value=${testVar})")
 					.endChoose()
-					*/
+				.endSequence()
+				
 				.beginParallel()
-					/*
 					.beginSequence()
 						.invoke("company_a", "getQuote", "result")
 						.log("results found = ${result.found}")
@@ -65,10 +66,53 @@ class Main  {
 						.invoke("company_a", "getQuote", "result")
 						.log("results found = ${result.found}")
 					.endSequence()
-					*/
 					
 					.beginSequence()
+						.log("")
+						.log("")
 						.invoke("company_b", "getQuote", "result")
+							.beginParams()
+								.param("param1", "value1")
+								.param("param2", "value2")
+								.param("param3", "value3")
+							.endParams()
+						.log("results found = ${result.found}")
+
+						.call(function() {
+							Logger.info("bob");
+						})
+						
+						.invoke("company_c", "getQuote", "result")
+							.beginParams()
+								.param("param1", "value1")
+								.param("param2", "value2")
+								.param("param3", "value3")
+							.endParams()	
+						.log("results found = ${result.found}")
+					.endSequence()
+
+					.beginSequence()
+						.log("")
+						.log("")
+						
+						.invoke("company_b", "getQuote", "result")
+							.beginParams()
+								.param("param1", "value1")
+								.param("param2", "value2")
+								.param("param3", "value3")
+							.endParams()
+						.log("results found = ${result.found}")
+						
+						.call(function() {
+							Logger.info("bob");
+						})
+						
+						.invoke("company_c", "getQuote", "result")
+							.beginParams()
+								.param("param1", "value1")
+								.param("param2", "value2")
+								.param("param3", "value3")
+							.endParams()	
 						.log("results found = ${result.found}")
 					.endSequence()
 					
@@ -76,10 +120,8 @@ class Main  {
 						.invoke("company_c", "getQuote", "result")
 						.log("results found = ${result.found}")
 					.endSequence()
-					
 				.endParallel()
 				
-				/*
 				.beginSequence()
 					.set("var1", 100)
 					.beginSequence()
@@ -93,9 +135,7 @@ class Main  {
 						.log("result = ${result}")
 					.endSequence()
 				.endSequence()
-				*/
 		
-		/*
 				.beginParallel()
 					.beginSequence()
 						.log("start thread 1")
@@ -115,44 +155,37 @@ class Main  {
 						.log("end thread 3")
 					.endSequence()
 				.endParallel()
-		*/
 				
-		/*
+				.beginSequence()
+						.beginLoop([15, 10, 5], "delay")
+							.log("delaying for ${delay} seconds")
+							.delay("${delay}")
+							.log("${delay} second delay complete")
+						.endLoop()
+				.endSequence()
+				
+				.beginSequence()
+					.set("var_global", "something")
 					.beginSequence()
-							.beginLoop([15, 10, 5], "delay")
-								.log("delaying for ${delay} seconds")
-								.delay("${delay}")
-								.log("${delay} second delay complete")
-							.endLoop()
+						.set("var1", "bob")
+						.log(1)
+						.delay(.5)
+						.log("2 ${var1 + 'tim'}")
+						.delay(".5")
 					.endSequence()
-		*/
-		
-			/*
-			.beginSequence()
-				.set("var_global", "something")
-				.beginSequence()
-					.set("var1", "bob")
-					.log(1)
-					.delay(.5)
-					.log("2 ${var1 + 'tim'}")
-					.delay(".5")
+					.beginSequence()
+						.log("3")
+						.delay(.5)
+						.log("4")
+						.log("${var_global}, ${var1}")
+						.delay(.5)
+					.endSequence()
 				.endSequence()
-				.beginSequence()
-					.log("3")
-					.delay(.5)
-					.log("4")
-					.log("${var_global}, ${var1}")
-					.delay(.5)
-				.endSequence()
-			.endSequence()
-			*/
 			;
-		//p.endScope();
-		//trace(p);
 		p.dump();
 		
 		p.execute().handle(function(r) {
-			trace("Process result: " + r);
+			Logger.info("Process result: " + r);
 		});
 	}
 }

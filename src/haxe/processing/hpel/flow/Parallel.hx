@@ -1,6 +1,7 @@
 package haxe.processing.hpel.flow;
 
 import haxe.processing.hpel.Process;
+import haxe.processing.hpel.util.Logger;
 
 #if neko
 import neko.vm.Thread;
@@ -45,7 +46,7 @@ class Parallel extends Scope {
 		var c:Process = Thread.readMessage(true);
 		var t:Parallel = Thread.readMessage(true);
 		var m:Thread = Thread.readMessage(true);
-		trace("starting " + c.id);
+		Logger.debug("starting " + c.id + " thread");
 		c.execute().handle(function(r) {
 			m.sendMessage(r);
 		});

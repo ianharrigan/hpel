@@ -1,18 +1,19 @@
 package haxe.processing.hpel.standard;
 
 import haxe.processing.hpel.Process;
+import haxe.processing.hpel.util.Logger;
 
 class Log extends Process {
 	public var message(default, default):String;
 	
 	public function new(message:Dynamic = null) {
-		super();
+		super(["message"]);
 		this.message = message;
 	}
 	
 	// Overridables
 	private override function delegateExecute() {
-		trace(evalString(message, false));
+		Logger.info(evalString(message, false));
 		success();
 	}
 	

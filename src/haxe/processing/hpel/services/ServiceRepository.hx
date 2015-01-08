@@ -1,4 +1,5 @@
 package haxe.processing.hpel.services;
+import haxe.processing.hpel.util.Logger;
 
 class ServiceRepository {
 	public static var instance(get, null):ServiceRepository;
@@ -49,11 +50,11 @@ class ServiceRepository {
 			}
 			
 			if (serviceId == null) {
-				trace("WARNING: no service id found");
+				Logger.warn("WARNING: no service id found");
 				continue;
 			}
 			if (serviceClass == null) {
-				trace("WARNING: no service class found");
+				Logger.warn("WARNING: no service class found");
 				continue;
 			}
 			

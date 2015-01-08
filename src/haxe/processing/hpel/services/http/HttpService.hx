@@ -3,6 +3,7 @@ package haxe.processing.hpel.services.http;
 import haxe.format.JsonParser;
 import haxe.Http;
 import haxe.processing.hpel.util.IdUtils;
+import haxe.processing.hpel.util.Logger;
 
 #if neko
 import neko.vm.Thread;
@@ -32,6 +33,8 @@ class HttpService extends Service {
 				url = value;
 			case "type":
 				type = value;
+			default:
+				super.setServiceParam(name, value);
 		}
 	}
 	
@@ -71,22 +74,29 @@ class HttpService extends Service {
 		var p:HttpService = Thread.readMessage(true);
 		var m:Thread = Thread.readMessage(true);
 		var u:String = p.url;
-		trace("running http call");
+		if (p._serviceParams != null) {
+			Logger.debug("running http call - params: " + p._serviceParams);
+		}
 		var http:Http = new Http(u);
-		http.cnxTimeout = 10000;
+		if (p._serviceParams != null) {
+			for (param in p._serviceParams.keys()) {
+				var value = p._serviceParams.get(param);
+				http.setParameter(param, value);
+			}
+		}
+		//http.cnxTimeout = 10000;
 		//http.setParameter("test", IdUtils.guid());
-		//trace(http.url);
 		http.onData = function onData(data:String) {
-			trace(data);
+			Logger.debug(data);
 			p.processResponse(http);
 			m.sendMessage("complete");
 		}
 		http.onStatus = function onStatus(status:Int) {
-			trace("HttpService::onStatus - " + status);
+			Logger.debug("HttpService::onStatus - " + status);
 			p.status = status;
 		}
 		http.onError = function onError(msg:String) {
-			trace("HttpService::onError - " + msg);
+			Logger.debug("HttpService::onError - " + msg);
 			p.errorMessage = msg;
 			m.sendMessage("errored");
 		}
