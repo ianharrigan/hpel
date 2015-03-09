@@ -40,7 +40,7 @@ class Invoke extends Process {
 		
 		service.call(operationCopy).handle(function(result) {
 			setVar(varNameCopy, result.responseData);
-			success();
+			succeeded();
 		});
 	}
 }

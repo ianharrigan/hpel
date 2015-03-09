@@ -14,7 +14,7 @@ class Log extends Process {
 	// Overridables
 	private override function delegateExecute() {
 		Logger.info(evalString(message, false));
-		success();
+		succeeded();
 	}
 	
 	public override function clone():Process {

@@ -16,6 +16,6 @@ class Call extends Process {
 		if (f != null) {
 			f();
 		}
-		success();
+		succeeded();
 	}
 }

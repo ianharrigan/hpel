@@ -32,7 +32,6 @@ class Main  {
 					});
 		*/
 		
-		/*
 		var xmlString:String = Resource.getString("test1.xml");
 		p = ProcessBuilder.create(ProcessBuilder.XML, xmlString);
 		p.dump();
@@ -40,10 +39,48 @@ class Main  {
 			Logger.info("Process result: " + r);
 		});
 		return;
-		*/
 		
 		p = ProcessBuilder.create()
-		
+
+		/*
+				.beginSequence()
+					.beginErrorHandler()
+						.log("Caught it!")
+					.endErrorHandler()
+					.log("test1")
+					.error("this is an error")
+					.log("test2")
+				.endSequence()
+				*/
+
+				/*
+				.beginParallel()
+					.beginErrorHandler()
+						.log("Caught it!")
+					.endErrorHandler()
+					.log("1")
+					.error("bob")
+					.log("2")
+					.log("3")
+				.endParallel()
+				*/
+				
+				.beginParallel()
+					.beginErrorHandler()
+						.log("Caught it!")
+					.endErrorHandler()
+					.log("1")
+					.error("bob")
+					.beginSequence()
+						.beginErrorHandler()
+							.log("Caught it 2!")
+						.endErrorHandler()
+						.error("bob2")
+					.endSequence()
+					.log("3")
+				.endParallel()
+			
+				/*
 				.beginSequence()
 					.set("testVar", 0)
 					.beginChoose()
@@ -181,6 +218,7 @@ class Main  {
 						.delay(.5)
 					.endSequence()
 				.endSequence()
+				*/
 			;
 		p.dump();
 		

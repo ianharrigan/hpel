@@ -28,7 +28,7 @@ class Choose extends Process {
 			otherwise.delegateExecute();
 		}
 		
-		success(); // need error strategy, what if one fails?
+		succeeded(); // need error strategy, what if one fails?
 	}
 	
 	private override function getDSLReturn():Process {

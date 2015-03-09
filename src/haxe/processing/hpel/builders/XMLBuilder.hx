@@ -12,11 +12,13 @@ class XMLBuilder extends ProcessBuilder {
 		_classNames.set("choose", haxe.processing.hpel.conditional.Choose);
 		_classNames.set("otherwise", haxe.processing.hpel.conditional.Otherwise);
 		_classNames.set("when", haxe.processing.hpel.conditional.When);
+		_classNames.set("errorHandler", haxe.processing.hpel.flow.ErrorHandler);
 		_classNames.set("loop", haxe.processing.hpel.flow.Loop);
 		_classNames.set("parallel", haxe.processing.hpel.flow.Parallel);
 		_classNames.set("scope", haxe.processing.hpel.flow.Scope);
 		_classNames.set("sequence", haxe.processing.hpel.flow.Sequence);
 		_classNames.set("delay", haxe.processing.hpel.standard.Delay);
+		_classNames.set("error", haxe.processing.hpel.standard.Error);
 		_classNames.set("invoke", haxe.processing.hpel.standard.Invoke);
 		_classNames.set("log", haxe.processing.hpel.standard.Log);
 		_classNames.set("param", haxe.processing.hpel.standard.Param);

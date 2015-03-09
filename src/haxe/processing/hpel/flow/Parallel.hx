@@ -21,6 +21,10 @@ class Parallel extends Scope {
 		completeThread.sendMessage(Thread.current());
 		
 		for (c in _children) {
+			if (Std.is(c, haxe.processing.hpel.flow.ErrorHandler) == true) {
+				continue;
+			}
+			
 			var thread:Thread = Thread.create(childThread);
 			thread.sendMessage(c);
 			thread.sendMessage(this);
@@ -28,7 +32,14 @@ class Parallel extends Scope {
 		}
 		
 		Thread.readMessage(true);
-		success(); // need error strategy, what if one fails?
+		//succeeded(); // need error strategy, what if one fails?
+		checkComplete();
+		
+		for (c in _children) {
+			if (c.errorObject != null) {
+				throw c.errorObject;
+			}
+		}
 	}
 	#end
 	
@@ -46,9 +57,15 @@ class Parallel extends Scope {
 		var c:Process = Thread.readMessage(true);
 		var t:Parallel = Thread.readMessage(true);
 		var m:Thread = Thread.readMessage(true);
-		Logger.debug("starting " + c.id + " thread");
-		c.execute().handle(function(r) {
-			m.sendMessage(r);
-		});
+		Logger.debug("starting '" + c.id + "' thread");
+		try {
+			c.execute().handle(function(r) {
+				m.sendMessage(r);
+			});
+		} catch (e:Dynamic) {
+			Logger.warn("Exception in '" + c.id + "' thread"); 
+			c.errored(e);
+			m.sendMessage("");
+		}
 	}
 }

@@ -12,7 +12,7 @@ class Loop extends Scope {
 	
 	private override function delegateExecute() {
 		if (complete == true) {
-			success();
+			succeeded();
 			return;
 		}
 		
@@ -40,7 +40,7 @@ class Loop extends Scope {
 			n++;
 		}
 
-		success();  // need error strategy, what if one fails?
+		succeeded();  // need error strategy, what if one fails?
 		
 		if (Std.is(parent, Parallel)) {
 			parent.delegateExecute();

@@ -15,6 +15,6 @@ class Set extends Process {
 	// Overridables
 	private override function delegateExecute() {
 		setVar(name, evalString(value));
-		success();
+		succeeded();
 	}
 }

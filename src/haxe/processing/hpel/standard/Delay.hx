@@ -20,7 +20,7 @@ class Delay extends Process {
 			s = cast r;
 		}
 		Sys.sleep(s);
-		success();
+		succeeded();
 	}
 	
 	public override function clone():Process {

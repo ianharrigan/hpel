@@ -1,5 +1,6 @@
 package haxe.processing.hpel;
 
+import haxe.processing.hpel.flow.ErrorHandler;
 import haxe.processing.hpel.flow.Scope;
 import haxe.processing.hpel.hscript.ScriptInterp;
 import haxe.processing.hpel.util.IdUtils;
@@ -11,6 +12,7 @@ class Process {
 	public var parent(default, default):Process;
 
 	private var complete(default, null):Bool = false;
+	private var errorObject(default, null):Dynamic = null;
 	
 	private var _trigger:FutureTrigger<ProcessResult>;
 	private var _children:Array<Process>;
@@ -40,7 +42,20 @@ class Process {
 	}
 	
 	public function execute():Future<ProcessResult> {
-		delegateExecute();
+		try {
+			delegateExecute();
+		} catch (e:Dynamic) {
+			var errorHandler = findChild(haxe.processing.hpel.flow.ErrorHandler);
+			if (errorHandler != null) {
+				errorHandler.execute().handle(function(r) {
+					succeeded();
+					_trigger.asFuture();
+				});
+			} else {
+				errored(e);
+				throw e;
+			}
+		}
 		return _trigger.asFuture();
 	}
 	
@@ -91,12 +106,16 @@ class Process {
 	private function delegateExecute() {
 		if (_children != null && _children.length > 0) {
 			for (c in _children) {
+				if (Std.is(c, haxe.processing.hpel.flow.ErrorHandler) == true) {
+					continue;
+				}
+				
 				c.execute().handle(function(r) {
 					checkComplete();
 				});
 			}
 		} else {
-			success();
+			succeeded();
 		}
 	}
 	
@@ -107,25 +126,35 @@ class Process {
 	private function checkComplete():Void {
 		// TODO: need an error and aggregation strategy here
 		var childrenComplete = true;
+		var e:Dynamic = null;
 		for (c in _children) {
+			if (Std.is(c, haxe.processing.hpel.flow.ErrorHandler) == true) {
+				continue;
+			}
+			
 			if (c.complete == false) {
 				childrenComplete = false;
 				break;
 			}
+			
+			if (c.errorObject != null) {
+				e = c.errorObject;
+			}
 		}
 		
 		if (childrenComplete == true) {
-			success();
+			succeeded();
 		}
 	}
 
-	private function success() {
+	private function succeeded() {
 		complete = true;
 		_trigger.trigger(new ProcessResult());
 	}
 	
-	private function error() {
+	private function errored(e:Dynamic) {
 		complete = true;
+		errorObject = e;
 		_trigger.trigger(new ProcessResult());
 	}
 	
@@ -280,6 +309,14 @@ class Process {
 		return parent;
 	}
 
+	public function beginErrorHandler():Process {
+		return addChild(haxe.processing.hpel.flow.ErrorHandler);
+	}
+	
+	public function endErrorHandler():Process {
+		return parent;
+	}
+	
 	// Conditionals are special
 	public function beginChoose():Process {
 		return addChild(haxe.processing.hpel.conditional.Choose);
@@ -318,6 +355,10 @@ class Process {
 		return addChild(haxe.processing.hpel.standard.Set, [name, value]);
 	}
 	
+	public function error(exception:Dynamic = null):Process {
+		return addChild(haxe.processing.hpel.standard.Error, [exception]);
+	}
+	
 	public function invoke(serviceId:Dynamic, operation:Dynamic = null, varName:String = null):Process {
 		return addChild(haxe.processing.hpel.standard.Invoke, [serviceId, operation, varName]);
 	}
@@ -348,10 +389,8 @@ class Process {
 	}
 	
 	// temp helpers
-	/*
-	public var className(get, null):String;
+	private var className(get, null):String;
 	private function get_className():String {
 		return Type.getClassName(Type.getClass(this));
 	}
-	*/
 }
