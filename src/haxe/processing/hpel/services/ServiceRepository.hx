@@ -1,4 +1,5 @@
 package haxe.processing.hpel.services;
+import haxe.processing.hpel.services.ServiceDescriptor.ServiceOperationDescriptor;
 import haxe.processing.hpel.util.Logger;
 
 class ServiceRepository {
@@ -35,6 +36,7 @@ class ServiceRepository {
 				service.setServiceParam(key, descriptor.params.get(key));
 			}
 		}
+		service.descriptor = descriptor;
 		return service;
 	}
 	
@@ -47,6 +49,8 @@ class ServiceRepository {
 			switch (type) {
 				case "http":
 					serviceClass = ServiceDescriptor.HTTP;
+				case "mysql":
+					serviceClass = ServiceDescriptor.MYSQL;
 			}
 			
 			if (serviceId == null) {
@@ -59,11 +63,52 @@ class ServiceRepository {
 			}
 			
 			var descriptor:ServiceDescriptor = new ServiceDescriptor(serviceId, serviceClass);
-			for (paramNode in serviceNode.elementsNamed("param")) {
-				var paramName:String = paramNode.get("name");
-				var paramValue:String = paramNode.get("value");
-				descriptor.addParam(paramName, paramValue);
+			for (paramNode in serviceNode.elements()) {
+				var nodeName:String = paramNode.nodeName;
+				if (nodeName == "operations") {
+					continue;
+				}
+				
+				var paramName:String = null;
+				var paramValue:String = null;
+				if (nodeName == "param") {
+					paramName = paramNode.get("name");
+					paramValue = paramNode.get("value");
+				} else {
+					paramName = nodeName;
+					paramValue = paramNode.firstChild().nodeValue;
+				}
+				
+				if (paramName != null && paramValue != null) {
+					descriptor.addParam(paramName, paramValue);
+				}
 			}
+			
+			var operationsNode:Xml = serviceNode.elementsNamed("operations").next();
+			if (operationsNode != null) {
+				for (operationNode in operationsNode.elementsNamed("operation")) {
+					var operationId:String = operationNode.get("id");
+					var operation:ServiceOperationDescriptor = descriptor.addOperation(operationId);
+					
+					for (paramNode in operationNode.elements()) {
+						var nodeName:String = paramNode.nodeName;
+						var paramName:String = null;
+						var paramValue:String = null;
+						if (nodeName == "param") {
+							paramName = paramNode.get("name");
+							paramValue = paramNode.get("value");
+						} else {
+							paramName = nodeName;
+							paramValue = paramNode.firstChild().nodeValue;
+						}
+						
+						if (paramName != null && paramValue != null) {
+							operation.addParam(paramName, paramValue);
+						}
+					}
+				}
+			}
+			
 			addService(descriptor);
 		}
 	}

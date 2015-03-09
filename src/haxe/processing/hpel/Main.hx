@@ -37,7 +37,7 @@ class Main  {
 		p.dump();
 		p.execute().handle(function(r) {
 			Logger.info("Process result: " + r);
-			Logger.info(r.payload.length);
+			//Logger.info(r.payload.length);
 		});
 		return;
 		

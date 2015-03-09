@@ -1,5 +1,6 @@
 package haxe.processing.hpel.standard;
 
+import haxe.processing.hpel.flow.Scope;
 import haxe.processing.hpel.Process;
 import haxe.processing.hpel.services.Service;
 import haxe.processing.hpel.services.ServiceRepository;
@@ -28,6 +29,7 @@ class Invoke extends Process {
 		var service:Service = ServiceRepository.instance.createServiceInstance(serviceIdCopy);
 		
 		var params:Process = findChild(Params);
+		var paramMap:Map<String, Dynamic> = new Map<String, Dynamic>();
 		if (params != null) {
 			var paramArray:Array<Process> = params.findChildren(Param);
 			for (p in paramArray) {
@@ -35,12 +37,18 @@ class Invoke extends Process {
 				var name = evalString(param.name);
 				var value = evalString(param.value);
 				service.setServiceParam(name, value);
+				paramMap.set(name, value);
 			}
 		}
 		
-		service.call(operationCopy).handle(function(result) {
+		service.call(operationCopy, paramMap).handle(function(result) {
 			setVar(varNameCopy, result.responseData);
 			succeeded();
 		});
+	}
+	
+	// Overridables
+	private override function getDSLReturn():Process {
+		return this;
 	}
 }

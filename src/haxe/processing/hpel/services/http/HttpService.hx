@@ -2,6 +2,7 @@ package haxe.processing.hpel.services.http;
 
 import haxe.format.JsonParser;
 import haxe.Http;
+import haxe.processing.hpel.services.Service;
 import haxe.processing.hpel.util.IdUtils;
 import haxe.processing.hpel.util.Logger;
 
@@ -41,9 +42,10 @@ class HttpService extends Service {
 	public override function delegateCall(operation:String = null, params:Map<String, Dynamic> = null) {
 		errorMessage = null;
 		status = -1;
-		
+
 		var callThread:Thread = Thread.create(callThread);
 		callThread.sendMessage(this);
+		callThread.sendMessage(operation);
 		callThread.sendMessage(Thread.current());
 		
 		Thread.readMessage(true);
@@ -72,10 +74,13 @@ class HttpService extends Service {
 	
 	private function callThread() {
 		var p:HttpService = Thread.readMessage(true);
+		var operation:String = Thread.readMessage(true);
 		var m:Thread = Thread.readMessage(true);
 		var u:String = p.url;
+		u = StringTools.replace(u, "%OPERATION%", operation);
+		Logger.debug("http call: " + u);
 		if (p._serviceParams != null) {
-			Logger.debug("running http call - params: " + p._serviceParams);
+			Logger.debug("http params: " + p._serviceParams);
 		}
 		var http:Http = new Http(u);
 		if (p._serviceParams != null) {

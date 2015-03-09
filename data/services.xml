@@ -1,15 +1,38 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <services>
 	<service id="company_a" type="http">
-		<param name="url" value="http://localhost:2000/companya/getProducts" />
-		<param name="type" value="json" />
+		<url>http://localhost:2000/companya/%OPERATION%</url>
+		<type>json</type>
 	</service>
 	<service id="company_b" type="http">
-		<param name="url" value="http://localhost:2000/companyb/getProducts" />
-		<param name="type" value="json" />
+		<url>http://localhost:2000/companyb/%OPERATION%</url>
+		<type>json</type>
 	</service>
 	<service id="company_c" type="http">
-		<param name="url" value="http://localhost:2000/companyc/getProducts" />
-		<param name="type" value="json" />
+		<url>http://localhost:2000/companyc/%OPERATION%</url>
+		<type>json</type>
+	</service>
+	
+	<service id="db_service" type="mysql">
+		<host>localhost</host>
+		<port>3306</port>
+		<user>root</user>
+		<pass></pass>
+		<database>hpel-test</database>
+		<type>json</type>
+		<operations>
+			<operation id="getProducts">
+				<sql>SELECT * FROM tbl_products;</sql>
+			</operation>
+			<operation id="addProduct">
+				<sql>INSERT INTO tbl_products (product_name, product_price) VALUES ('%PRODUCT_NAME%', %PRODUCT_PRICE%);</sql>
+			</operation>
+			<operation id="deleteProduct">
+				<sql>DELETE FROM tbl_products WHERE (product_id = %PRODUCT_ID%);</sql>
+			</operation>
+			<operation id="updateProduct">
+				<sql>UPDATE tbl_products SET product_name='%PRODUCT_NAME%',product_price=%PRODUCT_PRICE% WHERE (product_id = %PRODUCT_ID%);</sql>
+			</operation>
+		</operations>
 	</service>
 </services>

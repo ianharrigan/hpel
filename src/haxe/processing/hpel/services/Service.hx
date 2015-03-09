@@ -5,6 +5,8 @@ import tink.core.Future;
 class Service {
 	private var _trigger:FutureTrigger<Service>;
 
+	public var descriptor(default, default):ServiceDescriptor;
+	
 	public var responseData(default, default):Dynamic;
 	public var responseVars(default, default):Map<String, String>;
 	
@@ -15,7 +17,11 @@ class Service {
 	}
 	
 	public function call(operation:String = null, params:Map<String, Dynamic> = null):Future<Service> {
-		delegateCall();
+		var paramsCopy:Map<String, Dynamic> = new Map<String, Dynamic>();
+		for (key in params.keys()) {
+			paramsCopy.set(key, params.get(key));
+		}
+		delegateCall(operation, paramsCopy);
 		return _trigger.asFuture();
 	}
 	

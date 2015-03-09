@@ -1,20 +1,60 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <process>
 	<sequence>
+		<!--
 		<set name="output" value="${[]}" />
 		<parallel>
 			<sequence>
-				<invoke service="company_a" operation="getQuote" var="result_a" />
+				<invoke service="company_a" operation="getProducts" var="result_a" />
 				<set name="output" value="${output.concat(result_a.items)}" />
 			</sequence>
 			
 			<sequence>
-				<invoke service="company_b" operation="getQuote" var="result_b" />
+				<invoke service="company_b" operation="getProducts" var="result_b" />
 				<set name="output" value="${output.concat(result_b.items)}" />
 			</sequence>
 		</parallel>
 		
 		<log message="Found: ${output.length}" />
+		-->
+		<!-- list products -->
+		<invoke service="db_service" operation="getProducts" var="products" />
+		<log message="Found: ${products.length}" />
+		
+		<!-- add product -->
+		<invoke service="db_service" operation="addProduct" var="productId">
+			<params>
+				<param name="product_name" value="test_product" />
+				<param name="product_price" value="8.88" />
+			</params>
+		</invoke>
+		<log message="Added product: ${productId}" />
+
+		<!--  edit and verify -->
+		<invoke service="db_service" operation="updateProduct" var="productEdited">
+			<params>
+				<param name="product_id" value="${productId}" />
+				<param name="product_name" value="new_test_product" />
+				<param name="product_price" value="9.99" />
+			</params>
+		</invoke>
+		<choose>
+			<when condition="${productEdited == 0}">
+				<error message="Product not edited!" />
+			</when>
+		</choose>
+
+		<!--  delete and verify -->
+		<invoke service="db_service" operation="deleteProduct" var="productRemoved">
+			<params>
+				<param name="product_id" value="${productId}" />
+			</params>
+		</invoke>
+		<choose>
+			<when condition="${productRemoved == 0}">
+				<error message="Product not removed!" />
+			</when>
+		</choose>
 	</sequence>
 	
 	<!--

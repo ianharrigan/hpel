@@ -11,6 +11,5 @@ class CallStackHelper {
 			return;
 		}
 		trace(haxe.CallStack.toString(arr));
-		trace(">>>>>>>>>>>>>>>>>>>>>>>>>>>> END >>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 	}
 }
