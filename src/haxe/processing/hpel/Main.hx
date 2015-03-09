@@ -13,6 +13,15 @@ class Main  {
 		var p:Process = null;
 
 		ServiceRepository.instance.addServicesFromXml(Xml.parse(Resource.getString("services.xml")));
+	
+		ServiceRepository.instance
+			.addService(new ServiceDescriptor("hpel_1", ServiceDescriptor.HPEL))
+				.addParam("process", ProcessBuilder.create()
+					.beginSequence()
+						.log("this is a test")
+						.set("output", "this is the result")
+					.endSequence());
+		
 		
 		/*
 		var sd:ServiceDescriptor = ServiceRepository.instance.addService(new ServiceDescriptor("company_a", ServiceDescriptor.HTTP));

@@ -3,6 +3,7 @@ package haxe.processing.hpel.services;
 class ServiceDescriptor {
 	public static inline var HTTP:Class<Service> = haxe.processing.hpel.services.http.HttpService;
 	public static inline var MYSQL:Class<Service> = haxe.processing.hpel.services.mysql.MySqlService;
+	public static inline var HPEL:Class<Service> = haxe.processing.hpel.services.HpelService;
 	
 	public var serviceId(default, default):String;
 	public var serviceClass(default, default):Class<Service>;
@@ -16,11 +17,12 @@ class ServiceDescriptor {
 		this.params = params;
 	}
 	
-	public function addParam(name:String, value:Dynamic):Void {
+	public function addParam(name:String, value:Dynamic):ServiceDescriptor {
 		if (params == null) {
 			params = new Map<String, Dynamic>();
 		}
 		params.set(name, value);
+		return this;
 	}
 	
 	public function addOperation(operationId:String, params:Map<String, Dynamic> = null):ServiceOperationDescriptor {
@@ -49,10 +51,11 @@ class ServiceOperationDescriptor {
 		this.params = params;
 	}
 	
-	public function addParam(name:String, value:Dynamic):Void {
+	public function addParam(name:String, value:Dynamic):ServiceOperationDescriptor {
 		if (params == null) {
 			params = new Map<String, Dynamic>();
 		}
 		params.set(name, value);
+		return this;
 	}
 }

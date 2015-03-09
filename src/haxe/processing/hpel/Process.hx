@@ -398,7 +398,6 @@ class Process {
 		if (p == null) {
 			throw "No matching invoke";
 		}
-		trace(p);
 		return p.addChild(haxe.processing.hpel.standard.Params);
 	}
 	
