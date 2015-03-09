@@ -22,7 +22,7 @@ class Invoke extends Process {
 		var operationCopy = evalString(operation);
 		var varNameCopy = varName;
 		if (varNameCopy == null) {
-			varNameCopy = "invokeResult";
+			varNameCopy = "output";
 		}
 	
 		var service:Service = ServiceRepository.instance.createServiceInstance(serviceIdCopy);

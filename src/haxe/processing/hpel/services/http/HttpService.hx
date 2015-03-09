@@ -50,7 +50,7 @@ class HttpService extends Service {
 		if (errorMessage == null) {
 			success();
 		} else {
-			error();
+			error(errorMessage);
 		}
 	}
 	

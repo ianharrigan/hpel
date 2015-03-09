@@ -27,8 +27,9 @@ class Service {
 		_trigger.trigger(this);
 	}
 	
-	private function error() {
-		_trigger.trigger(this);
+	private function error(e:Dynamic) {
+		//_trigger.trigger(this);
+		throw e;
 	}
 	
 	public function setServiceParam(name:String, value:Dynamic):Void {

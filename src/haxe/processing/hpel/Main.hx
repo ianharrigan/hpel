@@ -37,11 +37,25 @@ class Main  {
 		p.dump();
 		p.execute().handle(function(r) {
 			Logger.info("Process result: " + r);
+			Logger.info(r.payload.length);
 		});
 		return;
 		
 		p = ProcessBuilder.create()
 
+					.beginSequence()
+						.invoke("company_a", "getQuote", "result_a")
+						.log("found = ${result_a.items.length}")
+						.beginLoop("${result_a.items}", "item")
+							.log("${item.name}")
+							.log("${item.price}")
+						.endLoop()
+
+						.invoke("company_b", "getQuote", "result_b")
+						.log("found = ${result_b.items.length}")
+						
+						.set("output", "${result_a.items.concat(result_b.items)}")
+					.endSequence()
 		/*
 				.beginSequence()
 					.beginErrorHandler()
@@ -65,6 +79,7 @@ class Main  {
 				.endParallel()
 				*/
 				
+				/*
 				.beginParallel()
 					.beginErrorHandler()
 						.log("Caught it!")
@@ -72,14 +87,12 @@ class Main  {
 					.log("1")
 					.error("bob")
 					.beginSequence()
-						.beginErrorHandler()
-							.log("Caught it 2!")
-						.endErrorHandler()
 						.error("bob2")
 					.endSequence()
 					.log("3")
 				.endParallel()
-			
+				*/
+				
 				/*
 				.beginSequence()
 					.set("testVar", 0)
@@ -224,6 +237,7 @@ class Main  {
 		
 		p.execute().handle(function(r) {
 			Logger.info("Process result: " + r);
+			Logger.info(r.payload.length);
 		});
 	}
 }

@@ -1,4 +1,5 @@
 package haxe.processing.hpel.flow;
+import haxe.processing.hpel.util.Logger;
 
 class Loop extends Scope {
 	public var items:Dynamic;
@@ -21,6 +22,10 @@ class Loop extends Scope {
 			arr = cast items;
 		}
 		
+		if (Std.is(arr, Array) == false) {
+			Logger.warn("'" + items + "' doesnt result in an array");
+		}
+		
 		var n:Int = 1;
 		var index:Int = parent._children.indexOf(this);
 		for (v in arr) {
@@ -30,7 +35,6 @@ class Loop extends Scope {
 			if (varName != null) {
 				seq.setVar(varName, v);
 			}
-			
 			for (c in _children) {
 				var copy = c.clone();
 				copy.parent = seq;

@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <process>
 	<sequence>
-		<errorHandler>
-			<log message="Caught it!" />
-		</errorHandler>
-		<log message="1" />
-		<error message="test" />
-		<log message="2" />
+		<set name="output" value="${[]}" />
+		<parallel>
+			<sequence>
+				<invoke service="company_a" operation="getQuote" var="result_a" />
+				<set name="output" value="${output.concat(result_a.items)}" />
+			</sequence>
+			
+			<sequence>
+				<invoke service="company_b" operation="getQuote" var="result_b" />
+				<set name="output" value="${output.concat(result_b.items)}" />
+			</sequence>
+		</parallel>
+		
+		<log message="Found: ${output.length}" />
 	</sequence>
 	
 	<!--

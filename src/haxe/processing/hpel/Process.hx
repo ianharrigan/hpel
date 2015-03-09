@@ -3,6 +3,7 @@ package haxe.processing.hpel;
 import haxe.processing.hpel.flow.ErrorHandler;
 import haxe.processing.hpel.flow.Scope;
 import haxe.processing.hpel.hscript.ScriptInterp;
+import haxe.processing.hpel.util.CallStackHelper;
 import haxe.processing.hpel.util.IdUtils;
 import haxe.processing.hpel.util.Logger;
 import tink.core.Future;
@@ -14,7 +15,7 @@ class Process {
 	private var complete(default, null):Bool = false;
 	private var errorObject(default, null):Dynamic = null;
 	
-	private var _trigger:FutureTrigger<ProcessResult>;
+	private var _trigger:FutureTrigger<ProcessMessage>;
 	private var _children:Array<Process>;
 
 	private var _vars:Map<String, Dynamic>;
@@ -24,8 +25,22 @@ class Process {
 	public function new(paramNames:Array<String> = null) {
 		this.paramNames = paramNames;
 		id = IdUtils.createObjectId(this);
-		_trigger = new FutureTrigger<ProcessResult>();
+		_trigger = new FutureTrigger<ProcessMessage>();
 		_vars = new Map<String, Dynamic>();
+	}
+	
+	private var output(get, null):ProcessMessage;
+	private function get_output():ProcessMessage {
+		return output;
+	}
+
+	private var root(get, null):Process;
+	private function get_root():Process {
+		var p = this;
+		while (p.parent != null) {
+			p = p.parent;
+		}
+		return p;
 	}
 	
 	public function addChild(cls:Class<Process>, params:Array<Dynamic> = null):Process {
@@ -41,7 +56,7 @@ class Process {
 		return c.getDSLReturn();
 	}
 	
-	public function execute():Future<ProcessResult> {
+	public function execute():Future<ProcessMessage> {
 		try {
 			delegateExecute();
 		} catch (e:Dynamic) {
@@ -52,6 +67,7 @@ class Process {
 					_trigger.asFuture();
 				});
 			} else {
+				CallStackHelper.traceCallStack();
 				errored(e);
 				throw e;
 			}
@@ -59,7 +75,11 @@ class Process {
 		return _trigger.asFuture();
 	}
 	
-	public function setVar(varName:String, varValue:Dynamic) {
+	private function setVar(varName:String, varValue:Dynamic) {
+		if (varName == "output") {
+			root.output = new ProcessMessage(varValue);
+		}
+		
 		var p = this;
 		var firstScope = null;
 		var found:Bool = false;
@@ -82,7 +102,7 @@ class Process {
 		}
 	}
 	
-	public function getVar(varName:String) {
+	private function getVar(varName:String) {
 		var varValue = _vars.get(varName);
 		if (varValue == null && parent != null) {
 			varValue = parent.getVar(varName);
@@ -90,7 +110,7 @@ class Process {
 		return varValue;
 	}
 	
-	public function getVars():Map<String, Dynamic> {
+	private function getVars():Map<String, Dynamic> {
 		var vars:Map<String, Dynamic> = new Map<String, Dynamic>();
 		var p = this;
 		while (p != null) {
@@ -149,13 +169,15 @@ class Process {
 
 	private function succeeded() {
 		complete = true;
-		_trigger.trigger(new ProcessResult());
+		_trigger.trigger(root.output);
 	}
 	
 	private function errored(e:Dynamic) {
 		complete = true;
 		errorObject = e;
-		_trigger.trigger(new ProcessResult());
+		setVar("error", e);
+		root.output = new ProcessMessage(e);
+		_trigger.trigger(root.output);
 	}
 	
 	private function getDSLReturn():Process {
@@ -192,11 +214,19 @@ class Process {
 			var before:String = copy.substr(0, n1);
 			var after:String = copy.substr(n2 + 1, copy.length);
 			var script:String = copy.substr(n1 + 2, n2 - n1 - 2);
-			
+
 			var result = eval(script);
-			
-			copy = before + result + after;
-			n1 = copy.indexOf("${");
+			var resultType = Type.getClassName(Type.getClass(result));
+			if (before.length != 0 || after.length != 0) {
+				copy = before + result + after;
+			} else {
+				copy = result;
+			}
+			if (Std.is(copy, String)) {
+				n1 = copy.indexOf("${");
+			} else {
+				n1 = -1;
+			}
 		}
 		if (evaluateResult == true) {
 			return eval(copy);
@@ -212,7 +242,7 @@ class Process {
 		var vars:Map<String, Dynamic> = getVars();
 		var parser = new hscript.Parser();
 		var program = parser.parseString(script);
-		var interp = new ScriptInterp();
+		var interp = new haxe.processing.hpel.util.ScriptInterp();
 		for (v in vars.keys()) {
 			interp.variables.set(v, vars.get(v));
 		}
