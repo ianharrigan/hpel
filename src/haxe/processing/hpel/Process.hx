@@ -56,8 +56,13 @@ class Process {
 		return c.getDSLReturn();
 	}
 	
-	public function execute():Future<ProcessMessage> {
+	public function execute(params:Map<String, Dynamic> = null):Future<ProcessMessage> {
 		try {
+			if (params != null) {
+				for (key in params.keys()) {
+					root.findChild(Scope).setVar(key, params.get(key));
+				}
+			}
 			delegateExecute();
 		} catch (e:Dynamic) {
 			var errorHandler = findChild(haxe.processing.hpel.flow.ErrorHandler);
@@ -123,17 +128,32 @@ class Process {
 	}
 	
 	// Overridables
+	private var _currentIndex:Int = 0;
 	private function delegateExecute() {
 		if (_children != null && _children.length > 0) {
+			
+			var c = _children[_currentIndex];
+			if (c != null) {
+				c.execute().handle(function(r) {
+					checkComplete();
+					if (complete == false) {
+						_currentIndex++;
+						delegateExecute();
+					}
+				});
+			}
+			/*
 			for (c in _children) {
 				if (Std.is(c, haxe.processing.hpel.flow.ErrorHandler) == true) {
 					continue;
 				}
+		trace(c.className);
 				
 				c.execute().handle(function(r) {
 					checkComplete();
 				});
 			}
+			*/
 		} else {
 			succeeded();
 		}
@@ -394,7 +414,8 @@ class Process {
 	}
 	
 	public function beginParams():Process {
-		var p = findChild(haxe.processing.hpel.standard.Invoke,  _children.length - 1);
+		//var p = findChild(haxe.processing.hpel.standard.Invoke,  _children.length - 1);
+		var p = findParent(haxe.processing.hpel.standard.Invoke);
 		if (p == null) {
 			throw "No matching invoke";
 		}

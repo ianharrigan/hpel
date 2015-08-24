@@ -10,7 +10,8 @@ class Loop extends Scope {
 		this.items = items;
 		this.varName = varName;
 	}
-	
+
+	/* TODO: Need to come back to this, doesnt work on cpp correctly
 	private override function delegateExecute() {
 		if (complete == true) {
 			succeeded();
@@ -50,4 +51,5 @@ class Loop extends Scope {
 			parent.delegateExecute();
 		}
 	}
+	*/
 }

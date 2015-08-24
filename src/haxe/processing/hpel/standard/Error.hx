@@ -12,6 +12,6 @@ class Error extends Process {
 	
 	// Overridables
 	private override function delegateExecute() {
-		throw exception;
+		throw evalString(exception, false);
 	}
 }

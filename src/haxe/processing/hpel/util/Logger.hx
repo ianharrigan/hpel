@@ -10,6 +10,6 @@ class Logger {
 	}
 	
 	public static function debug(message:String) {
-		trace("DEBUG: " + message);
+		//trace("DEBUG: " + message);
 	}
 }

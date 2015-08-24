@@ -4,6 +4,12 @@ import haxe.processing.hpel.services.Service;
 import haxe.processing.hpel.services.ServiceDescriptor.ServiceOperationDescriptor;
 import haxe.processing.hpel.util.Logger;
 
+#if mobile
+	class MySqlService extends Service {
+		
+	}
+#else
+
 #if neko
 import sys.db.Connection;
 import sys.db.Mysql;
@@ -26,7 +32,9 @@ class MySqlService extends Service {
 	public var database(default, default):String;
 	public var type(default, default):String = MySqlResponseType.JSON;
 	
+	#if (cpp || neko)
 	private static var _connection:Connection;
+	#end
 	
 	public function new() {
 		super();
@@ -52,6 +60,7 @@ class MySqlService extends Service {
 	}
 	
 	public override function delegateCall(operation:String = null, params:Map<String, Dynamic> = null) {
+		#if (cpp || neko)
 		if (pass == null) {
 			pass = "";
 		}
@@ -112,5 +121,10 @@ class MySqlService extends Service {
 			}
 			error(e);
 		}
+		#else
+		error("Platform not supported");
+		#end
 	}
 }
+
+#end

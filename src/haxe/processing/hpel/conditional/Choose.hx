@@ -14,7 +14,13 @@ class Choose extends Process {
 		for (c in _children) {
 			if (Std.is(c, When)) {
 				var condition = cast(c, When).condition;
+				
+				#if (flash || mobile)
+				var result:Bool = evalString(condition) == "true";
+				#else
 				var result:Bool = cast evalString(condition);
+				#end
+				
 				if (result == true) {
 					processed = true;
 					c.delegateExecute();

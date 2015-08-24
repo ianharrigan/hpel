@@ -1,0 +1,13 @@
+{
+    "name"         : "hpel",
+    "url"          : "https://github.com/ianharrigan/hpel",
+    "license"      : "MIT",
+    "tags"         : [],
+    "description"  : "HPEL",
+    "version"      : "0.0.2",
+    "releasenote"  : "",
+    "contributors" : ["ianharrigan"],
+    "dependencies" : {
+        "tink_core"        : "",
+    }
+}

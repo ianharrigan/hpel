@@ -13,13 +13,17 @@ class Delay extends Process {
 	// Overridables
 	private override function delegateExecute() {
 		var r = evalString(seconds);
-		var s:Float;
+		var s:Float = 0;
 		if (Std.is(r, Float) == false) {
 			s = Std.parseFloat(r);
 		} else {
+			#if !(android || cpp)
 			s = cast r;
+			#end
 		}
+		#if (cpp || neko)
 		Sys.sleep(s);
+		#end
 		succeeded();
 	}
 	

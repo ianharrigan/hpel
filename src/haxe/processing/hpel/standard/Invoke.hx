@@ -25,7 +25,7 @@ class Invoke extends Process {
 		if (varNameCopy == null) {
 			varNameCopy = "output";
 		}
-	
+		
 		var service:Service = ServiceRepository.instance.createServiceInstance(serviceIdCopy);
 		
 		var params:Process = findChild(Params);
@@ -34,8 +34,8 @@ class Invoke extends Process {
 			var paramArray:Array<Process> = params.findChildren(Param);
 			for (p in paramArray) {
 				var param:Param = cast p;
-				var name = evalString(param.name);
-				var value = evalString(param.value);
+				var name = evalString(param.name, false);
+				var value = evalString(param.value, false);
 				service.setServiceParam(name, value);
 				paramMap.set(name, value);
 			}

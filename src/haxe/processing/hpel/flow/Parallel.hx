@@ -6,7 +6,7 @@ import haxe.processing.hpel.util.Logger;
 #if neko
 import neko.vm.Thread;
 #elseif cpp
-import neko.vm.Thread;
+import cpp.vm.Thread;
 #end
 
 class Parallel extends Scope {
@@ -41,7 +41,6 @@ class Parallel extends Scope {
 			}
 		}
 	}
-	#end
 	
 	private function completeThread() {
 		var t:Parallel = Thread.readMessage(true);
@@ -68,4 +67,5 @@ class Parallel extends Scope {
 			m.sendMessage("");
 		}
 	}
+	#end
 }

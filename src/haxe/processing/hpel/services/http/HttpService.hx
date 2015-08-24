@@ -9,7 +9,7 @@ import haxe.processing.hpel.util.Logger;
 #if neko
 import neko.vm.Thread;
 #elseif cpp
-import neko.vm.Thread;
+import cpp.vm.Thread;
 #end
 
 class HttpResponseType {
@@ -43,6 +43,8 @@ class HttpService extends Service {
 		errorMessage = null;
 		status = -1;
 
+		#if ((cpp || neko) && !mobile)
+		
 		var callThread:Thread = Thread.create(callThread);
 		callThread.sendMessage(this);
 		callThread.sendMessage(operation);
@@ -54,15 +56,45 @@ class HttpService extends Service {
 		} else {
 			error(errorMessage);
 		}
+		
+		#elseif (flash || mobile)
+		
+		var u:String = this.url;
+		u = StringTools.replace(u, "%OPERATION%", operation);
+		var http:Http = new Http(u);
+		if (_serviceParams != null) {
+			for (param in _serviceParams.keys()) {
+				var value = _serviceParams.get(param);
+				http.setParameter(param, value);
+			}
+		}
+		http.setParameter("___", IdUtils.guid()); // overcome flash caching
+		
+		http.onData = function(data:String) {
+			processResponse(http);
+			success();
+		}
+		http.onError = function(msg:String) {
+			this.errorMessage = msg;
+			error(this.errorMessage);
+		}
+		http.onStatus = function(status:Int) {
+			this.status = status;
+		}
+		http.request();
+		
+		#end
 	}
 	
 	private function processResponse(http:Http):Void {
 		responseVars = new Map<String, String>();
+		#if (cpp || neko)
 		if (http.responseHeaders != null) {
 			for (key in http.responseHeaders.keys()) {
 				responseVars.set(key, http.responseHeaders.get(key));
 			}
 		}
+		#end
 		
 		switch (type) {
 			case HttpResponseType.JSON:
@@ -72,6 +104,7 @@ class HttpService extends Service {
 		}
 	}
 	
+	#if (cpp || neko)
 	private function callThread() {
 		var p:HttpService = Thread.readMessage(true);
 		var operation:String = Thread.readMessage(true);
@@ -86,7 +119,9 @@ class HttpService extends Service {
 		if (p._serviceParams != null) {
 			for (param in p._serviceParams.keys()) {
 				var value = p._serviceParams.get(param);
-				http.setParameter(param, value);
+				if (value != null) {
+					http.setParameter(param, value);
+				}
 			}
 		}
 		//http.cnxTimeout = 10000;
@@ -107,4 +142,5 @@ class HttpService extends Service {
 		}
 		http.request();
 	}
+	#end
 }
