@@ -1,1 +1,1 @@
-haxelib submit haxeui-file-dialogs.zip
+haxelib submit hpel.zip

@@ -8,6 +8,6 @@
     "releasenote"  : "",
     "contributors" : ["ianharrigan"],
     "dependencies" : {
-        "tink_core"        : "",
+        "tink_core"        : ""
     }
 }
